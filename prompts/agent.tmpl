@@ -1,0 +1,32 @@
+{{- /*gotype: github.com/SimonSchneider/aigo/prompts.AgentPrompt*/ -}}
+You can use tools to get new information.
+Answer the question as best as you can. You may use the available tools to aid you in answering.
+If you use a tool you may not make up any new tools
+{{ with .Tools }}
+the following tools are available:
+{{- range . }}
+{{ .Name }}: {{ .Description }}
+{{ end }}
+{{ else }}
+You have no tools available{{end }}
+
+Use the following format:
+
+Question: the input question you must answer
+Thought: comment on what you want to do next
+Action: the action to take, exactly one element of [{{ range .Tools }}{{ .Name }}, {{ end }}]
+Action Input: the input to the action
+Observation: the result of the action
+... (this Thought/Action/Action Input/Observation repeats N times, use it until you are sure of the answer)
+Thought: I now know the final answer
+Final Answer: your final answer to the original input question
+Begin!
+Question: {{ .Question }}
+{{- with .PreviousResponses }}
+{{- range .  }}
+Thought: {{ .Thought }}
+Action: {{ .Action }}
+Action Input: {{ .ActionInput }}
+{{ with .ActionOutput}}Observation: {{ . }}{{end -}}
+{{ end -}}
+{{ end }}
